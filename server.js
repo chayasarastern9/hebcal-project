@@ -2,7 +2,6 @@
 const express = require("express");
 const axios = require("axios");
 const cors = require("cors");
-const path = require("path"); // Needed to serve React build
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -11,9 +10,9 @@ const port = process.env.PORT || 5000;
 app.use(cors());
 
 // Root test route
-app.get("/", (req, res) => {
-  res.send("Hebcal Zmanim API Backend is running!");
-});
+// app.get("/", (req, res) => {
+//   res.send("Hebcal Zmanim API Backend is running!");
+// });
 
 // Main endpoint to fetch Zmanim
 app.get("/api/zmanim", async (req, res) => {
@@ -44,6 +43,7 @@ app.get("/api/zmanim", async (req, res) => {
 
 // --- Serve React frontend ---
 // This must come AFTER all API routes
+const path = require("path"); // Needed to serve React build
 app.use(express.static(path.join(__dirname, "client/build")));
 
 app.get("*", (req, res) => {
