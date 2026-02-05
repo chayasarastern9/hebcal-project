@@ -1,6 +1,8 @@
+
 const express = require("express");
 const axios = require("axios");
 const cors = require("cors");
+const path = require("path"); // Needed to serve React build
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -38,6 +40,14 @@ app.get("/api/zmanim", async (req, res) => {
     console.error("Error fetching zmanim:", error.message);
     res.status(500).json({ error: "Failed to fetch zmanim" });
   }
+});
+
+// --- Serve React frontend ---
+// This must come AFTER all API routes
+app.use(express.static(path.join(__dirname, "client/build")));
+
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "client/build", "index.html"));
 });
 
 // Start server
