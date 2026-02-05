@@ -3,7 +3,6 @@ import { useState } from "react";
 import axios from "axios";
 import "./App.css";
 
-// Static city list for autocomplete 
 const cityOptions = [
   "Abu Dhabi", "Ahmedabad", "Albuquerque", "Aleppo", "Amman", "Amsterdam",
   "Ankara", "Antwerp", "Athens", "Atlanta", "Auckland", "Austin",
@@ -26,29 +25,26 @@ const cityOptions = [
   "Shanghai", "Singapore", "Stockholm", "Sydney", "Taipei", "Tampa",
   "Tel Aviv", "Tokyo", "Toronto", "Valencia", "Vancouver", "Venice",
   "Vienna", "Warsaw", "Washington", "Wellington", "Zagreb", "Zurich",
-  "Brooklyn", "Lakewood" 
+  "Brooklyn", "Lakewood"
 ];
 
-// Helper function: split Zman names on capital letters or numbers
 const splitZmanName = (name) => {
   return name.replace(/([A-Z0-9])/g, ' $1').trim();
 };
 
 function App() {
-  // State variables
-  const [mode, setMode] = useState("city");       // Search mode: city, zip, or location
-  const [city, setCity] = useState("");           // City input
-  const [zip, setZip] = useState("");             // ZIP input
-  const [zmanim, setZmanim] = useState(null);     // Zmanim data from API
-  const [loading, setLoading] = useState(false);  // Loading state
-  const [suggestions, setSuggestions] = useState([]); // Autocomplete suggestions
+  const [mode, setMode] = useState("city");
+  const [city, setCity] = useState("");
+  const [zip, setZip] = useState("");
+  const [zmanim, setZmanim] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [suggestions, setSuggestions] = useState([]);
 
-  // Fetch zmanim from backend API
   const fetchZmanim = async (query) => {
     setLoading(true);
     setZmanim(null);
     try {
-      const res = await axios.get(`http://localhost:5000/api/zmanim?${query}`);
+      const res = await axios.get(`/api/zmanim?${query}`);
       setZmanim(res.data.times);
     } catch {
       alert("Failed to load zmanim");
@@ -56,7 +52,6 @@ function App() {
     setLoading(false);
   };
 
-  // Handlers for each search mode
   const handleCitySearch = () => fetchZmanim(`city=${city}`);
   const handleZipSearch = () => fetchZmanim(`zip=${zip}`);
   const handleLocationSearch = () => {
@@ -66,13 +61,12 @@ function App() {
     });
   };
 
-  // Handle input change for city and generate suggestions
   const handleCityInputChange = (value) => {
     setCity(value);
     if (value.length > 0) {
       const filtered = cityOptions
         .filter(c => c.toLowerCase().includes(value.toLowerCase()))
-        .slice(0, 10); // limit to top 10 suggestions
+        .slice(0, 10);
       setSuggestions(filtered);
     } else {
       setSuggestions([]);
@@ -81,17 +75,14 @@ function App() {
 
   return (
     <div className="app">
-      {/* App title */}
       <h1>Hebcal Zmanim</h1>
 
-      {/* Mode selection buttons */}
       <div className="mode-buttons">
         <button onClick={() => { setMode("city"); setSuggestions([]); }}>City</button>
         <button onClick={() => setMode("zip")}>ZIP</button>
         <button onClick={() => setMode("location")}>My Location</button>
       </div>
 
-      {/* City search */}
       {mode === "city" && (
         <div className="controls">
           <div className="input-wrapper">
@@ -100,7 +91,6 @@ function App() {
               value={city}
               onChange={(e) => handleCityInputChange(e.target.value)}
             />
-            {/* Autocomplete dropdown */}
             {suggestions.length > 0 && (
               <ul className="suggestions">
                 {suggestions.map((c) => (
@@ -117,7 +107,6 @@ function App() {
         </div>
       )}
 
-      {/* ZIP search */}
       {mode === "zip" && (
         <div className="controls">
           <input
@@ -131,7 +120,6 @@ function App() {
         </div>
       )}
 
-      {/* Geolocation search */}
       {mode === "location" && (
         <div className="controls">
           <button onClick={handleLocationSearch}>
@@ -140,15 +128,13 @@ function App() {
         </div>
       )}
 
-      {/* Loading indicator */}
       {loading && <p className="loading">Loading zmanim...</p>}
 
-      {/* Display Zmanim cards */}
       {zmanim && (
         <div className="grid">
           {Object.entries(zmanim).map(([name, time]) => (
             <div key={name} className="card">
-              <h3>{splitZmanName(name)}</h3> {/* Split name for readability */}
+              <h3>{splitZmanName(name)}</h3>
               <p>{new Date(time).toLocaleTimeString()} EST</p>
             </div>
           ))}
