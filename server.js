@@ -9,11 +9,6 @@ const port = process.env.PORT || 5000;
 // Allow requests from frontend (React)
 app.use(cors());
 
-// Root test route
-// app.get("/", (req, res) => {
-//   res.send("Hebcal Zmanim API Backend is running!");
-// });
-
 // Main endpoint to fetch Zmanim
 app.get("/api/zmanim", async (req, res) => {
   try {
@@ -30,7 +25,6 @@ app.get("/api/zmanim", async (req, res) => {
       return res.status(400).json({ error: "Missing city, zip, or coordinates" });
     }
 
-    // Optional: you can add &tzid=America/New_York or let Hebcal auto-detect timezone
     const response = await axios.get(apiUrl);
 
     // Return only the "times" object from Hebcal API
@@ -42,7 +36,6 @@ app.get("/api/zmanim", async (req, res) => {
 });
 
 // --- Serve React frontend ---
-// This must come AFTER all API routes
 const path = require("path"); // Needed to serve React build
 app.use(express.static(path.join(__dirname, "client/build")));
 
